@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TVINKY & TILT | DONATE SYSTEM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --gold: #ffd700; --dark: #0a0a12; --card: #161625; --green: #00ff88; --blue: #3498db; }
+        
+        body { 
+            background: var(--dark); 
+            color: white; 
+            font-family: 'Roboto', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            min-height: 100vh;
+            background: radial-gradient(circle at center, #1a1a2e 0%, #0a0a12 100%);
+        }
+        
+        .order-container { 
+            width: 95%; 
+            max-width: 480px; 
+            background: var(--card); 
+            padding: 25px; 
+            border-radius: 25px; 
+            border: 1px solid rgba(255,215,0,0.15); 
+            box-shadow: 0 25px 60px rgba(0,0,0,0.7); 
+            margin: 20px;
+        }
+
+        h2 { font-family: 'Orbitron', sans-serif; color: var(--gold); text-align: center; margin-bottom: 20px; text-shadow: 0 0 10px rgba(255,215,0,0.3); font-size: 1.4rem; }
+        
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 6px; font-size: 0.75rem; color: #888; text-transform: uppercase; letter-spacing: 1px; }
+        
+        input, select { 
+            width: 100%; padding: 12px; background: #0f0f1b; border: 1px solid #333; 
+            color: white; border-radius: 12px; box-sizing: border-box; outline: none; transition: 0.3s; font-size: 0.9rem;
+        }
+        
+        input:focus, select:focus { border-color: var(--gold); background: #121225; }
+
+        optgroup { background: #161625; color: var(--gold); font-family: 'Orbitron', sans-serif; }
+        option { background: #0f0f1b; color: white; }
+
+        .file-upload { 
+            border: 2px dashed #333; padding: 12px; text-align: center; 
+            border-radius: 12px; cursor: pointer; transition: 0.3s; color: #aaa; font-size: 0.85rem;
+        }
+        .file-upload:hover { border-color: var(--gold); background: rgba(255,215,0,0.05); }
+
+        .btn-submit { 
+            width: 100%; padding: 15px; background: linear-gradient(45deg, var(--gold), #ffaa00); 
+            border: none; border-radius: 12px; color: #000; font-weight: 800; 
+            font-family: 'Orbitron', sans-serif; cursor: pointer; margin-top: 10px;
+            box-shadow: 0 5px 15px rgba(255,215,0,0.2); transition: 0.3s; font-size: 0.9rem;
+        }
+        .btn-submit:active { transform: scale(0.98); }
+
+        /* Queue Section */
+        #queueSection { display: none; text-align: center; animation: fadeIn 0.5s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .loader { 
+            border: 4px solid #1a1a2e; border-top: 4px solid var(--gold); 
+            border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 20px auto; 
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        .queue-number { font-size: 3.5rem; color: var(--green); font-family: 'Orbitron', sans-serif; margin: 10px 0; text-shadow: 0 0 20px rgba(0,255,136,0.4); }
+        
+        .status-badge {
+            display: inline-block; padding: 6px 12px; border-radius: 8px; font-size: 0.8rem; font-weight: bold; margin-bottom: 10px; text-transform: uppercase;
+        }
+        .status-waiting { background: #f39c12; color: black; }
+        .status-process { background: var(--blue); color: white; }
+
+        .success-icon { font-size: 2.5rem; color: var(--green); display: none; margin-bottom: 5px; }
+    </style>
+</head>
+<body>
+
+<div class="order-container">
+    <div id="formSection">
+        <h2>TVINKY & TILT</h2>
+        <form id="orderForm">
+            <div class="form-group">
+                <label>O'yin ID va Server:</label>
+                <input type="text" id="gameId" placeholder="Masalan: 12345678 (1234)" required>
+            </div>
+            
+            <div class="form-group">
+                <label>Paketni tanlang:</label>
+                <select id="packet" required>
+                    <option value="" disabled selected>Tanlang...</option>
+                    <optgroup label="🌟 MAXSUS">
+                        <option value="Weekly Pass - 21.000">HAFTALIK PASS — 21.000 UZS</option>
+                    </optgroup>
+                    <optgroup label="💎 STANDART PACHETLAR">
+                        <option value="22 ⭐ - 6.000">22 ⭐ — 6.000 UZS</option>
+                        <option value="55 ⭐ - 13.000">55 ⭐ — 13.000 UZS</option>
+                        <option value="77 ⭐ - 18.000">77 ⭐ — 18.000 UZS</option>
+                        <option value="110 ⭐ - 24.000">110 ⭐ — 24.000 UZS</option>
+                        <option value="172 ⭐ - 35.000">172 ⭐ — 35.000 UZS</option>
+                        <option value="257 ⭐ - 48.000">257 ⭐ — 48.000 UZS</option>
+                        <option value="275 ⭐ - 50.000">275 ⭐ — 50.000 UZS</option>
+                        <option value="312 ⭐ - 57.000">312 ⭐ — 57.000 UZS</option>
+                        <option value="429 ⭐ - 80.000">429 ⭐ — 80.000 UZS</option>
+                        <option value="514 ⭐ - 95.000">514 ⭐ — 95.000 UZS</option>
+                        <option value="565 ⭐ - 105.000">565 ⭐ — 105.000 UZS</option>
+                        <option value="706 ⭐ - 130.000">706 ⭐ — 130.000 UZS</option>
+                        <option value="963 ⭐ - 170.000">963 ⭐ — 170.000 UZS</option>
+                        <option value="1130 ⭐ - 200.000">1130 ⭐ — 200.000 UZS</option>
+                        <option value="1220 ⭐ - 220.000">1220 ⭐ — 220.000 UZS</option>
+                        <option value="1412 ⭐ - 260.000">1412 ⭐ — 260.000 UZS</option>
+                        <option value="2195 ⭐ - 374.000">2195 ⭐ — 374.000 UZS</option>
+                        <option value="2452 ⭐ - 440.000">2452 ⭐ — 440.000 UZS</option>
+                        <option value="2901 ⭐ - 510.000">2901 ⭐ — 510.000 UZS</option>
+                        <option value="3688 ⭐ - 640.000">3688 ⭐ — 640.000 UZS</option>
+                        <option value="4390 ⭐ - 740.000">4390 ⭐ — 740.000 UZS</option>
+                        <option value="5532 ⭐ - 940.000">5532 ⭐ — 940.000 UZS</option>
+                        <option value="6042 ⭐ - 1.060.000">6042 ⭐ — 1.060.000 UZS</option>
+                        <option value="7727 ⭐ - 1.300.000">7727 ⭐ — 1.300.000 UZS</option>
+                        <option value="9288 ⭐ - 1.550.000">9288 ⭐ — 1.550.000 UZS</option>
+                        <option value="11064 ⭐ - 1.860.000">11064 ⭐ — 1.860.000 UZS</option>
+                    </optgroup>
+                    <optgroup label="🎁 BONUSLAR (1 marta)">
+                        <option value="50+50 ⭐ - 13.000">50+50=(100) ⭐ — 13.000 UZS</option>
+                        <option value="150+150 ⭐ - 32.000">150+150=(300) ⭐ — 32.000 UZS</option>
+                        <option value="250+250 ⭐ - 50.000">250+250=(500) ⭐ — 50.000 UZS</option>
+                        <option value="500+500 ⭐ - 105.000">500+500=(1000) ⭐ — 105.000 UZS</option>
+                    </optgroup>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>To'lov cheki (Screenshot):</label>
+                <div class="file-upload" onclick="document.getElementById('fileInput').click()">
+                    <span id="fileName">Rasm tanlash...</span>
+                    <input type="file" id="fileInput" hidden accept="image/*" onchange="updateFileName(this)">
+                </div>
+            </div>
+            
+            <button type="submit" class="btn-submit">SOTIB OLISH 🚀</button>
+        </form>
+    </div>
+
+    <div id="queueSection">
+        <div id="statusBadge" class="status-badge status-waiting">Kutilmoqda</div>
+        <h3 id="statusTitle">Murojaat yuborilmoqda...</h3>
+        <div class="loader" id="loader"></div>
+        <div class="success-icon" id="successIcon">✓</div>
+        <div id="queueInfo" style="display:none;">
+            <p>Sizning navbatingiz:</p>
+            <div class="queue-number" id="queueNumDisplay">#?</div>
+            <p id="timeLeft" style="color: var(--green); font-weight: bold;">Kutish vaqti: ~-- daqiqa</p>
+            <p style="font-size: 0.75rem; color: #888; margin-top: 25px;">
+                Murojaat qabul qilindi. To'lov tasdiqlangach, olmoslar yuboriladi.
+            </p>
+        </div>
+    </div>
+</div>
+
+<script>
+    const botToken = '8749291196:AAGChO11ZGlYJ68XX_UWuCXyviQzzqlOVbQ';
+    const chatId = 'ВАШ_ID'; // <--- НЕ ЗАБУДЬ ПОМЕНЯТЬ НА СВОЙ ID!
+
+    function updateFileName(input) {
+        if (input.files.length > 0) {
+            document.getElementById('fileName').innerText = "Rasm tanlandi ✅";
+            document.getElementById('fileName').style.color = "#00ff88";
+        }
+    }
+
+    document.getElementById('orderForm').onsubmit = function(e) {
+        e.preventDefault();
+        
+        const gameId = document.getElementById('gameId').value;
+        const packet = document.getElementById('packet').value;
+        const randomQueue = Math.floor(Math.random() * 5) + 2; 
+        const randomTime = randomQueue * 3;
+
+        const text = `🚀 **YANGI BUYURTMA!**\n\n👤 **ID:** \`${gameId}\` \n💎 **Paket:** ${packet}\n🔢 **Navbat:** #${randomQueue}\n\n✅ To'lovni tekshiring!`;
+        fetch(`https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(text)}&parse_mode=Markdown`);
+
+        document.getElementById('formSection').style.display = 'none';
+        document.getElementById('queueSection').style.display = 'block';
+
+        setTimeout(() => {
+            document.getElementById('loader').style.display = 'none';
+            document.getElementById('successIcon').style.display = 'block';
+            document.getElementById('statusTitle').innerText = "Qabul qilindi!";
+            document.getElementById('queueNumDisplay').innerText = `#${randomQueue}`;
+            document.getElementById('timeLeft').innerText = `Kutish vaqti: ~${randomTime} daqiqa`;
+            document.getElementById('queueInfo').style.display = 'block';
+            
+            setTimeout(() => {
+                const badge = document.getElementById('statusBadge');
+                badge.innerText = "Jarayonda";
+                badge.className = "status-badge status-process";
+                document.getElementById('statusTitle').innerText = "Operator tekshirmoqda...";
+            }, 4000);
+        }, 2000);
+    };
+</script>
+
+</body>
+</html>
