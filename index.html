@@ -8,13 +8,26 @@
     <style>
         :root { --gold: #ffd700; --dark: #0a0a12; --card: #161625; --green: #00ff88; --blue: #3498db; }
         body { background: var(--dark); color: white; font-family: 'Roboto', sans-serif; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; background: radial-gradient(circle at center, #1a1a2e 0%, #0a0a12 100%); overflow-x: hidden; }
-        .home-btn { position: fixed; top: 20px; left: 20px; background: rgba(255, 215, 0, 0.1); border: 1px solid var(--gold); color: var(--gold); padding: 10px 15px; border-radius: 12px; cursor: pointer; z-index: 100; font-family: 'Orbitron', sans-serif; transition: 0.3s; }
-        #newsOverlay { position: fixed; top: 0; left: -100%; width: 100%; height: 100%; background: var(--dark); z-index: 200; transition: 0.5s ease-in-out; padding: 20px; box-sizing: border-box; overflow-y: auto; }
-        #newsOverlay.active { left: 0; }
-        .close-news { background: none; border: 1px solid #ff00ff; color: #ff00ff; padding: 8px 20px; border-radius: 10px; cursor: pointer; margin-bottom: 20px; }
+        
+        .top-nav { position: fixed; top: 20px; left: 20px; display: flex; gap: 10px; z-index: 100; }
+        .nav-btn { background: rgba(255, 215, 0, 0.1); border: 1px solid var(--gold); color: var(--gold); padding: 10px 15px; border-radius: 12px; cursor: pointer; font-family: 'Orbitron', sans-serif; transition: 0.3s; }
+        .nav-btn:hover { background: var(--gold); color: black; }
+
+        #newsOverlay, #priceOverlay { position: fixed; top: 0; left: -100%; width: 100%; height: 100%; background: var(--dark); z-index: 200; transition: 0.5s ease-in-out; padding: 20px; box-sizing: border-box; overflow-y: auto; }
+        #newsOverlay.active, #priceOverlay.active { left: 0; }
+        
+        .close-btn { background: none; border: 1px solid #ff00ff; color: #ff00ff; padding: 8px 20px; border-radius: 10px; cursor: pointer; margin-bottom: 20px; font-family: 'Orbitron', sans-serif; }
+        
+        .price-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 12px; margin-top: 20px; }
+        .price-card { background: var(--card); border: 1px solid rgba(255,215,0,0.2); border-radius: 15px; padding: 15px; text-align: center; transition: 0.3s; }
+        .price-card:hover { border-color: var(--gold); transform: translateY(-3px); }
+        .price-card .stars { display: block; color: var(--gold); font-weight: bold; font-family: 'Orbitron', sans-serif; font-size: 0.9rem; margin-bottom: 5px; }
+        .price-card .amount { display: block; color: var(--green); font-size: 0.8rem; font-weight: bold; }
+
         .article-card { background: var(--card); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; padding: 20px; margin-bottom: 20px; border-left: 4px solid var(--gold); }
         .article-card img { width: 100%; border-radius: 10px; margin-bottom: 15px; display: block; }
         .article-card h4 { color: var(--gold); margin: 0 0 10px 0; font-family: 'Orbitron', sans-serif; }
+        
         .order-container { width: 95%; max-width: 480px; background: var(--card); padding: 25px; border-radius: 25px; border: 1px solid rgba(255,215,0,0.15); box-shadow: 0 25px 60px rgba(0,0,0,0.7); margin: 20px; }
         h2 { font-family: 'Orbitron', sans-serif; color: var(--gold); text-align: center; margin-bottom: 20px; font-size: 1.4rem; }
         .form-group { margin-bottom: 15px; }
@@ -22,21 +35,31 @@
         input, select { width: 100%; padding: 12px; background: #0f0f1b; border: 1px solid #333; color: white; border-radius: 12px; box-sizing: border-box; outline: none; }
         .file-upload { border: 2px dashed #333; padding: 12px; text-align: center; border-radius: 12px; cursor: pointer; color: #aaa; font-size: 0.85rem; }
         .btn-submit { width: 100%; padding: 15px; background: linear-gradient(45deg, var(--gold), #ffaa00); border: none; border-radius: 12px; color: #000; font-weight: 800; font-family: 'Orbitron', sans-serif; cursor: pointer; margin-top: 10px; }
+        
+        /* Стили для экрана статуса */
         #queueSection { display: none; text-align: center; }
+        .status-badge { display: inline-block; padding: 10px 20px; border-radius: 10px; font-weight: bold; font-family: 'Orbitron', sans-serif; margin-bottom: 15px; color: #000; text-transform: uppercase; }
         .loader { border: 4px solid #1a1a2e; border-top: 4px solid var(--gold); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 20px auto; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
-<button class="home-btn" onclick="toggleNews()">🏠 HOME</button>
+<div class="top-nav">
+    <button class="nav-btn" onclick="toggleOverlay('newsOverlay')">🏠 AKSIYALAR</button>
+    <button class="nav-btn" onclick="toggleOverlay('priceOverlay')">💰 PRAYS</button>
+</div>
 
 <div id="newsOverlay">
-    <button class="close-news" onclick="toggleNews()">← ORQAGA</button>
+    <button class="close-btn" onclick="toggleOverlay('newsOverlay')">← ORQAGA</button>
     <h2 style="text-align: left;">AKSIYALAR</h2>
-    <div id="articlesContainer">
-        <p style="text-align:center; color:#555;">Hozircha aksiyalar yo'q...</p>
-    </div>
+    <div id="articlesContainer"><p style="text-align:center; color:#555;">Hozircha aksiyalar yo'q...</p></div>
+</div>
+
+<div id="priceOverlay">
+    <button class="close-btn" onclick="toggleOverlay('priceOverlay')">← ORQAGA</button>
+    <h2 style="text-align: left;">DONATE NARXLAR (UZB)</h2>
+    <div class="price-grid" id="priceGridUZB"></div>
 </div>
 
 <div class="order-container">
@@ -48,10 +71,10 @@
                 <label>Paket:</label>
                 <select id="packet" required>
                     <option value="" disabled selected>Tanlang...</option>
-                       <optgroup label="🌟 MAXSUS">
+                    <optgroup label="🌟 MAXSUS">
                         <option value="Weekly Pass - 21.000">HAFTALIK PASS — 21.000 UZS</option>
                     </optgroup>
-                    <optgroup label="💎 STANDART PACHETLAR">
+                    <optgroup label="💎 STANDART">
                         <option value="22 ⭐ - 6.000">22 ⭐ — 6.000 UZS</option>
                         <option value="55 ⭐ - 13.000">55 ⭐ — 13.000 UZS</option>
                         <option value="77 ⭐ - 18.000">77 ⭐ — 18.000 UZS</option>
@@ -79,12 +102,6 @@
                         <option value="9288 ⭐ - 1.550.000">9288 ⭐ — 1.550.000 UZS</option>
                         <option value="11064 ⭐ - 1.860.000">11064 ⭐ — 1.860.000 UZS</option>
                     </optgroup>
-                    <optgroup label="🎁 BONUSLAR (1 marta)">
-                        <option value="50+50 ⭐ - 13.000">50+50=(100) ⭐ — 13.000 UZS</option>
-                        <option value="150+150 ⭐ - 32.000">150+150=(300) ⭐ — 32.000 UZS</option>
-                        <option value="250+250 ⭐ - 50.000">250+250=(500) ⭐ — 50.000 UZS</option>
-                        <option value="500+500 ⭐ - 105.000">500+500=(1000) ⭐ — 105.000 UZS</option>
-                    </optgroup>
                 </select>
             </div>
             <div class="form-group">
@@ -98,7 +115,8 @@
         </form>
     </div>
     <div id="queueSection">
-        <h3>Qabul qilindi!</h3>
+        <div id="statusBadge" class="status-badge" style="background:#ffd700;">PROTSESSDA</div>
+        <h3 id="statusTitle">Murojaat qabul qilindi!</h3>
         <div class="loader" id="loader"></div>
         <p>Navbatingiz: <span id="queueNum" style="color:var(--green); font-weight:bold;">#--</span></p>
     </div>
@@ -120,37 +138,76 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    function toggleNews() { document.getElementById('newsOverlay').classList.toggle('active'); }
+    function toggleOverlay(id) { document.getElementById(id).classList.toggle('active'); }
     function updateFileName(input) { if (input.files[0]) document.getElementById('fileName').innerText = "✅ Rasm tayyor"; }
 
-    // Загрузка акций из базы
+    const uzbPrices = [
+        {s: "Weekly Pass", p: "21.000"}, {s: "22 ⭐", p: "6.000"}, {s: "55 ⭐", p: "13.000"},
+        {s: "77 ⭐", p: "18.000"}, {s: "110 ⭐", p: "24.000"}, {s: "172 ⭐", p: "35.000"},
+        {s: "257 ⭐", p: "48.000"}, {s: "275 ⭐", p: "50.000"}, {s: "312 ⭐", p: "57.000"},
+        {s: "429 ⭐", p: "80.000"}, {s: "514 ⭐", p: "95.000"}, {s: "565 ⭐", p: "105.000"},
+        {s: "706 ⭐", p: "130.000"}, {s: "963 ⭐", p: "170.000"}, {s: "1130 ⭐", p: "200.000"},
+        {s: "1220 ⭐", p: "220.000"}, {s: "1412 ⭐", p: "260.000"}, {s: "2195 ⭐", p: "374.000"},
+        {s: "2452 ⭐", p: "440.000"}, {s: "2901 ⭐", p: "510.000"}, {s: "3688 ⭐", p: "640.000"},
+        {s: "4390 ⭐", p: "740.000"}, {s: "5532 ⭐", p: "940.000"}, {s: "6042 ⭐", p: "1.060.000"},
+        {s: "7727 ⭐", p: "1.300.000"}, {s: "9288 ⭐", p: "1.550.000"}, {s: "11064 ⭐", p: "1.860.000"}
+    ];
+    document.getElementById('priceGridUZB').innerHTML = uzbPrices.map(item => `<div class="price-card"><span class="stars">${item.s}</span><span class="amount">${item.p} UZS</span></div>`).join('');
+
     db.ref('articles').on('value', (snap) => {
         const container = document.getElementById('articlesContainer');
         container.innerHTML = '';
         const data = snap.val();
         for (let id in data) {
             const item = data[id];
-            container.innerHTML += `
-                <div class="article-card">
-                    ${item.image ? `<img src="${item.image}">` : ''}
-                    <h4>${item.title}</h4>
-                    <p>${item.text}</p>
-                </div>`;
+            container.innerHTML += `<div class="article-card">${item.image ? `<img src="${item.image}">` : ''}<h4>${item.title}</h4><p>${item.text}</p></div>`;
         }
     });
 
-    document.getElementById('orderForm').onsubmit = function(e) {
+    // НОВАЯ ЛОГИКА ОТПРАВКИ
+    document.getElementById('orderForm').onsubmit = async function(e) {
         e.preventDefault();
-        const botToken = '8749291196:AAGChO11ZGlYJ68XX_UWuCXyviQzzqlOVbQ';
-        const chatId = '1743637553';
+        
         const gameId = document.getElementById('gameId').value;
         const packet = document.getElementById('packet').value;
         const fileInput = document.getElementById('fileInput');
-        const qNum = Math.floor(Math.random() * 5) + 2;
 
-        const text = `🚀 YANGI BUYURTMA!\n\n👤 ID: ${gameId}\n💎 Paket: ${packet}\n🔢 Navbat: #${qNum}`;
+        // 1. Очередь
+        const snapshot = await db.ref('orders').once('value');
+        const ordersCount = snapshot.val() ? Object.values(snapshot.val()).filter(o => o.status !== 'completed').length : 0;
+        const myQueuePos = ordersCount + 1;
+
+        // 2. Создаем ID
+        const orderRef = db.ref('orders').push();
+        const orderId = orderRef.key;
+
+        // 3. База данных
+        await orderRef.set({
+            gameId: gameId,
+            packet: packet,
+            status: 'processing',
+            queueNum: myQueuePos,
+            timestamp: Date.now()
+        });
+
+        // 4. Телеграм (с кнопками)
+        const botToken = '8749291196:AAGChO11ZGlYJ68XX_UWuCXyviQzzqlOVbQ';
+        const chatId = '1743637553';
+        
+        const keyboard = {
+            inline_keyboard: [[
+                { text: "✅ Принять", callback_data: `accept_${orderId}` },
+                { text: "🏁 Готово", callback_data: `done_${orderId}` }
+            ]]
+        };
+
+        const text = `🚀 *YANGI BUYURTMA #${myQueuePos}*\n🆔 ID: \`${orderId}\`\n👤 Game ID: \`${gameId}\`\n💎 Paket: ${packet}`;
+        
         const fd = new FormData();
         fd.append('chat_id', chatId);
+        fd.append('reply_markup', JSON.stringify(keyboard));
+        fd.append('parse_mode', 'Markdown');
+
         if (fileInput.files[0]) {
             fd.append('photo', fileInput.files[0]);
             fd.append('caption', text);
@@ -160,10 +217,37 @@
             fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, { method: 'POST', body: fd });
         }
 
+        showStatusScreen(orderId, myQueuePos);
+    };
+
+    function showStatusScreen(orderId, queueNum) {
         document.getElementById('formSection').style.display = 'none';
         document.getElementById('queueSection').style.display = 'block';
-        document.getElementById('queueNum').innerText = "#" + qNum;
-    };
+        document.getElementById('queueNum').innerText = "#" + queueNum;
+        
+        db.ref('orders/' + orderId).on('value', (snap) => {
+            const data = snap.val();
+            if(!data) return;
+            const badge = document.getElementById('statusBadge');
+            const title = document.getElementById('statusTitle');
+
+            if (data.status === 'processing') {
+                badge.innerText = "PROTSESSDA";
+                badge.style.background = "#ffd700";
+            } else if (data.status === 'accepted') {
+                badge.innerText = "QABUL QILINDI";
+                badge.style.background = "#3498db";
+                badge.style.color = "white";
+                title.innerText = "Operator ishni boshladi";
+            } else if (data.status === 'completed') {
+                badge.innerText = "TAYYOR";
+                badge.style.background = "#00ff88";
+                badge.style.color = "black";
+                title.innerText = "Olmoslar yuborildi!";
+                document.getElementById('loader').style.display = 'none';
+            }
+        });
+    }
 </script>
 </body>
 </html>
