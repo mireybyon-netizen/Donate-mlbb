@@ -183,9 +183,104 @@
         const randomQueue = Math.floor(Math.random() * 5) + 2; 
         const randomTime = randomQueue * 3;
 
-        const text = `🚀 **YANGI BUYURTMA!**\n\n👤 **ID:** \`${gameId}\` \n💎 **Paket:** ${packet}\n🔢 **Navbat:** #${randomQueue}\n\n✅ To'lovni tekshiring!`;
-        fetch(`https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(text)}&parse_mode=Markdown`);
+        <button type="submit" class="btn-submit">SOTIB OLISH 🚀</button>
+        </form>
+    </div>
 
+    <div id="queueSection">
+        <div id="statusBadge" class="status-badge status-waiting">Kutilmoqda</div>
+        <h3 id="statusTitle">Murojaat yuborilmoqda...</h3>
+        <div class="loader" id="loader"></div>
+        <div class="success-icon" id="successIcon">✓</div>
+        <div id="queueInfo" style="display:none;">
+            <p>Sizning navbatingiz:</p>
+            <div class="queue-number" id="queueNumDisplay">#?</div>
+            <p id="timeLeft" style="color: var(--green); font-weight: bold;">Kutish vaqti: ~-- daqiqa</p>
+            <p style="font-size: 0.75rem; color: #888; margin-top: 25px;">
+                Murojaat qabul qilindi. To'lov tasdiqlangach, olmoslar yuboriladi.
+            </p>
+        </div>
+    </div>
+</div>
+
+<script>
+    const botToken = '8749291196:AAGChO11ZGlYJ68XX_UWuCXyviQzzqlOVbQ';
+    const chatId = '1743637553';
+
+    function updateFileName(input) {
+        if (input.files.length > 0) {
+            document.getElementById('fileName').innerText = "Rasm tanlandi ✅";
+            document.getElementById('fileName').style.color = "#00ff88";
+        }
+    }
+
+    document.getElementById('orderForm').onsubmit = function(e) {
+        e.preventDefault();
+        
+        const gameId = document.getElementById('gameId').value;
+        const packet = document.getElementById('packet').value;
+        const randomQueue = Math.floor(Math.random() * 5) + 2; 
+        const randomTime = randomQueue * 3;
+
+      <button type="submit" class="btn-submit">SOTIB OLISH 🚀</button>
+        </form>
+    </div>
+
+    <div id="queueSection">
+        <div id="statusBadge" class="status-badge status-waiting">Kutilmoqda</div>
+        <h3 id="statusTitle">Murojaat yuborilmoqda...</h3>
+        <div class="loader" id="loader"></div>
+        <div class="success-icon" id="successIcon">✓</div>
+        <div id="queueInfo" style="display:none;">
+            <p>Sizning navbatingiz:</p>
+            <div class="queue-number" id="queueNumDisplay">#?</div>
+            <p id="timeLeft" style="color: var(--green); font-weight: bold;">Kutish vaqti: ~-- daqiqa</p>
+            <p style="font-size: 0.75rem; color: #888; margin-top: 25px;">
+                Murojaat qabul qilindi. To'lov tasdiqlangach, olmoslar yuboriladi.
+            </p>
+        </div>
+    </div>
+</div>
+
+<script>
+    const botToken = '8749291196:AAGChO11ZGlYJ68XX_UWuCXyviQzzqlOVbQ';
+    const chatId = '1743637553';
+
+    function updateFileName(input) {
+        if (input.files.length > 0) {
+            document.getElementById('fileName').innerText = "Rasm tanlandi ✅";
+            document.getElementById('fileName').style.color = "#00ff88";
+        }
+    }
+
+    document.getElementById('orderForm').onsubmit = function(e) {
+        e.preventDefault();
+        
+        const gameId = document.getElementById('gameId').value;
+        const packet = document.getElementById('packet').value;
+        const fileInput = document.getElementById('fileInput');
+        
+        const randomQueue = Math.floor(Math.random() * 5) + 2; 
+        const randomTime = randomQueue * 3;
+
+        const text = 🚀 **YANGI BUYURTMA!**\n\n👤 **ID:** \${gameId}\ \n💎 **Paket:** ${packet}\n🔢 **Navbat:** #${randomQueue}\n\n✅ To'lovni tekshiring!;
+
+        if (fileInput.files.length > 0) {
+            const formData = new FormData();
+            formData.append('chat_id', chatId);
+            formData.append('photo', fileInput.files[0]);
+            formData.append('caption', text);
+            formData.append('parse_mode', 'Markdown');
+
+            fetch(https://api.telegram.org/bot${botToken}/sendPhoto, {
+                method: 'POST',
+                body: formData
+            });
+        } else {
+        
+            fetch(https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(text)}&parse_mode=Markdown);
+        }
+    
         document.getElementById('formSection').style.display = 'none';
         document.getElementById('queueSection').style.display = 'block';
 
@@ -193,8 +288,8 @@
             document.getElementById('loader').style.display = 'none';
             document.getElementById('successIcon').style.display = 'block';
             document.getElementById('statusTitle').innerText = "Qabul qilindi!";
-            document.getElementById('queueNumDisplay').innerText = `#${randomQueue}`;
-            document.getElementById('timeLeft').innerText = `Kutish vaqti: ~${randomTime} daqiqa`;
+            document.getElementById('queueNumDisplay').innerText = #${randomQueue};
+            document.getElementById('timeLeft').innerText = Kutish vaqti: ~${randomTime} daqiqa;
             document.getElementById('queueInfo').style.display = 'block';
             
             setTimeout(() => {
