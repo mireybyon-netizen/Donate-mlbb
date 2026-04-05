@@ -13,10 +13,16 @@
         .nav-btn { background: rgba(255, 215, 0, 0.1); border: 1px solid var(--gold); color: var(--gold); padding: 10px 15px; border-radius: 12px; cursor: pointer; font-family: 'Orbitron', sans-serif; transition: 0.3s; }
         .nav-btn:hover { background: var(--gold); color: black; }
 
-        #newsOverlay, #priceOverlay { position: fixed; top: 0; left: -100%; width: 100%; height: 100%; background: var(--dark); z-index: 200; transition: 0.5s ease-in-out; padding: 20px; box-sizing: border-box; overflow-y: auto; }
+        #newsOverlay, #priceOverlay, .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); z-index: 2000; display: none; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; }
+        #newsOverlay, #priceOverlay { left: -100%; display: block; background: var(--dark); transition: 0.5s ease-in-out; justify-content: flex-start; align-items: flex-start; overflow-y: auto; }
+        
         #newsOverlay.active, #priceOverlay.active { left: 0; }
+        .overlay.active { display: flex; }
+
+        .overlay-content { background: #1a1a1a; padding: 30px; border-radius: 20px; border: 2px solid var(--gold); width: 85%; max-width: 400px; text-align: center; position: relative; box-shadow: 0 0 20px rgba(255, 215, 0, 0.2); }
         
         .close-btn { background: none; border: 1px solid #ff00ff; color: #ff00ff; padding: 8px 20px; border-radius: 10px; cursor: pointer; margin-bottom: 20px; font-family: 'Orbitron', sans-serif; }
+        .overlay .close-btn { position: absolute; top: 10px; right: 15px; border: none; font-size: 24px; color: white; }
         
         .price-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 12px; margin-top: 20px; }
         .price-card { background: var(--card); border: 1px solid rgba(255,215,0,0.2); border-radius: 15px; padding: 15px; text-align: center; transition: 0.3s; }
@@ -24,19 +30,13 @@
         .price-card .stars { display: block; color: var(--gold); font-weight: bold; font-family: 'Orbitron', sans-serif; font-size: 0.9rem; margin-bottom: 5px; }
         .price-card .amount { display: block; color: var(--green); font-size: 0.8rem; font-weight: bold; }
 
-        .article-card { background: var(--card); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; padding: 20px; margin-bottom: 20px; border-left: 4px solid var(--gold); }
-        .article-card img { width: 100%; border-radius: 10px; margin-bottom: 15px; display: block; }
-        .article-card h4 { color: var(--gold); margin: 0 0 10px 0; font-family: 'Orbitron', sans-serif; }
-        
         .order-container { width: 95%; max-width: 480px; background: var(--card); padding: 25px; border-radius: 25px; border: 1px solid rgba(255,215,0,0.15); box-shadow: 0 25px 60px rgba(0,0,0,0.7); margin: 20px; }
         h2 { font-family: 'Orbitron', sans-serif; color: var(--gold); text-align: center; margin-bottom: 20px; font-size: 1.4rem; }
-        .form-group { margin-bottom: 15px; }
+        .form-group { margin-bottom: 15px; text-align: left; }
         label { display: block; margin-bottom: 6px; font-size: 0.75rem; color: #888; text-transform: uppercase; }
-        input, select { width: 100%; padding: 12px; background: #0f0f1b; border: 1px solid #333; color: white; border-radius: 12px; box-sizing: border-box; outline: none; }
-        .file-upload { border: 2px dashed #333; padding: 12px; text-align: center; border-radius: 12px; cursor: pointer; color: #aaa; font-size: 0.85rem; }
+        input, select { width: 100%; padding: 12px; background: #0f0f1b; border: 1px solid #333; color: white; border-radius: 12px; box-sizing: border-box; outline: none; margin-bottom: 10px; }
         .btn-submit { width: 100%; padding: 15px; background: linear-gradient(45deg, var(--gold), #ffaa00); border: none; border-radius: 12px; color: #000; font-weight: 800; font-family: 'Orbitron', sans-serif; cursor: pointer; margin-top: 10px; }
         
-        /* Стили для экрана статуса */
         #queueSection { display: none; text-align: center; }
         .status-badge { display: inline-block; padding: 10px 20px; border-radius: 10px; font-weight: bold; font-family: 'Orbitron', sans-serif; margin-bottom: 15px; color: #000; text-transform: uppercase; }
         .loader { border: 4px solid #1a1a2e; border-top: 4px solid var(--gold); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 20px auto; }
@@ -44,6 +44,33 @@
     </style>
 </head>
 <body>
+
+<div id="authHeader" style="position: fixed; top: 10px; right: 10px; z-index: 1000;">
+    <button id="loginBtn" class="nav-btn" onclick="toggleOverlay('loginOverlay')" style="padding: 5px 15px; font-size: 12px;">KIRISH 👤</button>
+    <span id="userNameDisplay" style="color: var(--gold); display: none; margin-right: 10px; font-family: 'Orbitron'; font-size: 12px;"></span>
+</div>
+
+<div id="loginOverlay" class="overlay">
+    <div class="overlay-content">
+        <span class="close-btn" onclick="toggleOverlay('loginOverlay')">&times;</span>
+        
+        <div id="authChoice">
+            <h2 style="color: var(--gold); font-family: 'Orbitron';">AKKAUNT</h2>
+            <button class="btn-submit" onclick="showAuthStep('register')">YANGI AKKAUNT ✨</button>
+            <button class="nav-btn" style="width: 100%; margin-top: 10px; padding: 15px;" onclick="showAuthStep('login')">KIRISH (LOGIN) 👤</button>
+        </div>
+
+        <div id="authForm" style="display: none;">
+            <h2 id="authTitle" style="color: var(--gold); font-family: 'Orbitron';">KIRISH</h2>
+            <p id="authError" style="color: #ff4444; font-size: 12px; margin-bottom: 10px; display: none; font-weight: bold;"></p>
+            
+            <input type="text" id="loginName" placeholder="Ismingiz (Login)">
+            <input type="password" id="loginPass" placeholder="Parol">
+            <button id="authSubmitBtn" class="btn-submit">TASDIQLASH ✅</button>
+            <button class="nav-btn" style="width: 100%; margin-top: 10px; border: none; font-size: 12px;" onclick="showAuthStep('choice')">← ORQAGA</button>
+        </div>
+    </div>
+</div>
 
 <div class="top-nav">
     <button class="nav-btn" onclick="toggleOverlay('newsOverlay')">🏠 AKSIYALAR</button>
@@ -77,36 +104,14 @@
                     <optgroup label="💎 STANDART">
                         <option value="22 ⭐ - 6.000">22 ⭐ — 6.000 UZS</option>
                         <option value="55 ⭐ - 13.000">55 ⭐ — 13.000 UZS</option>
-                        <option value="77 ⭐ - 18.000">77 ⭐ — 18.000 UZS</option>
                         <option value="110 ⭐ - 24.000">110 ⭐ — 24.000 UZS</option>
-                        <option value="172 ⭐ - 35.000">172 ⭐ — 35.000 UZS</option>
-                        <option value="257 ⭐ - 48.000">257 ⭐ — 48.000 UZS</option>
-                        <option value="275 ⭐ - 50.000">275 ⭐ — 50.000 UZS</option>
-                        <option value="312 ⭐ - 57.000">312 ⭐ — 57.000 UZS</option>
-                        <option value="429 ⭐ - 80.000">429 ⭐ — 80.000 UZS</option>
-                        <option value="514 ⭐ - 95.000">514 ⭐ — 95.000 UZS</option>
-                        <option value="565 ⭐ - 105.000">565 ⭐ — 105.000 UZS</option>
-                        <option value="706 ⭐ - 130.000">706 ⭐ — 130.000 UZS</option>
-                        <option value="963 ⭐ - 170.000">963 ⭐ — 170.000 UZS</option>
-                        <option value="1130 ⭐ - 200.000">1130 ⭐ — 200.000 UZS</option>
                         <option value="1220 ⭐ - 220.000">1220 ⭐ — 220.000 UZS</option>
-                        <option value="1412 ⭐ - 260.000">1412 ⭐ — 260.000 UZS</option>
-                        <option value="2195 ⭐ - 374.000">2195 ⭐ — 374.000 UZS</option>
-                        <option value="2452 ⭐ - 440.000">2452 ⭐ — 440.000 UZS</option>
-                        <option value="2901 ⭐ - 510.000">2901 ⭐ — 510.000 UZS</option>
-                        <option value="3688 ⭐ - 640.000">3688 ⭐ — 640.000 UZS</option>
-                        <option value="4390 ⭐ - 740.000">4390 ⭐ — 740.000 UZS</option>
-                        <option value="5532 ⭐ - 940.000">5532 ⭐ — 940.000 UZS</option>
-                        <option value="6042 ⭐ - 1.060.000">6042 ⭐ — 1.060.000 UZS</option>
-                        <option value="7727 ⭐ - 1.300.000">7727 ⭐ — 1.300.000 UZS</option>
-                        <option value="9288 ⭐ - 1.550.000">9288 ⭐ — 1.550.000 UZS</option>
-                        <option value="11064 ⭐ - 1.860.000">11064 ⭐ — 1.860.000 UZS</option>
                     </optgroup>
                 </select>
             </div>
             <div class="form-group">
                 <label>To'lov cheki:</label>
-                <div class="file-upload" onclick="document.getElementById('fileInput').click()">
+                <div class="file-upload" style="border: 2px dashed #333; padding: 12px; text-align: center; border-radius: 12px; cursor: pointer; color: #aaa;" onclick="document.getElementById('fileInput').click()">
                     <span id="fileName">Rasm tanlash...</span>
                     <input type="file" id="fileInput" hidden accept="image/*" onchange="updateFileName(this)">
                 </div>
@@ -137,9 +142,175 @@
     };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
+    
+    let currentUser = null;
+    let authMode = 'login';
 
-    function toggleOverlay(id) { document.getElementById(id).classList.toggle('active'); }
-    function updateFileName(input) { if (input.files[0]) document.getElementById('fileName').innerText = "✅ Rasm tayyor"; }
+function loadArticles() {
+    db.ref('articles').on('value', (snapshot) => {
+        const container = document.getElementById('articlesContainer');
+        const data = snapshot.val();
+        if (data) {
+            container.innerHTML = Object.values(data).reverse().map(art => {
+                // Ищем ЛЮБОЕ поле в базе, которое содержит ссылку на картинку (http...)
+                let foundImg = "";
+                for (let key in art) {
+                    if (typeof art[key] === 'string' && (art[key].startsWith('http') || art[key].includes('firebasestorage'))) {
+                        foundImg = art[key];
+                        break; 
+                    }
+                }
+                
+                return `
+                <div style="background: var(--card); padding: 15px; border-radius: 15px; margin-bottom: 15px; border-left: 3px solid var(--gold);">
+                    ${foundImg ? `<img src="${foundImg}" style="width: 100%; border-radius: 10px; margin-bottom: 10px; display: block; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">` : ''}
+                    
+                    <h3 style="color: var(--gold); margin-top: 0; font-family: 'Orbitron';">${art.title || 'AKSIYA'}</h3>
+                    <p style="font-size: 14px; color: #ccc; line-height: 1.5; white-space: pre-wrap;">${art.text || art.description || ''}</p>
+                </div>
+                `;
+            }).join('');
+        } else {
+            container.innerHTML = '<p style="text-align:center; color:#555;">Hozircha aksiyalar yo\'q...</p>';
+        }
+    });
+}
+
+function loadPrices() {
+    db.ref('prices').on('value', (snapshot) => {
+        const grid = document.getElementById('priceGridUZB');
+        const data = snapshot.val();
+        if (data) {
+            grid.innerHTML = Object.values(data).map(item => `
+                <div class="price-card">
+                    <span class="stars">${item.stars || item.s}</span>
+                    <span class="amount">${item.price || item.p} UZS</span>
+                </div>
+            `).join('');
+        }
+    });
+}
+
+loadArticles();
+loadPrices();
+
+    function toggleOverlay(id) {
+        const el = document.getElementById(id);
+        if (el) {
+            el.classList.toggle('active');
+            if (id === 'loginOverlay') showAuthStep('choice');
+        }
+    }
+function loadArticles() {
+    db.ref('articles').on('value', (snapshot) => {
+        const container = document.getElementById('articlesContainer');
+        const data = snapshot.val();
+        if (data) {
+            container.innerHTML = Object.values(data).reverse().map(art => `
+                <div style="background: var(--card); padding: 15px; border-radius: 15px; margin-bottom: 15px; border-left: 3px solid var(--gold);">
+                    <h3 style="color: var(--gold); margin-top: 0;">${art.title}</h3>
+                    <p style="font-size: 14px; color: #ccc;">${art.text}</p>
+                    <small style="color: #666;">${art.date || ''}</small>
+                </div>
+            `).join('');
+        } else {
+            container.innerHTML = '<p style="text-align:center; color:#555;">Hozircha aksiyalar yo\'q...</p>';
+        }
+    });
+}
+
+function loadPrices() {
+    db.ref('prices').on('value', (snapshot) => {
+        const grid = document.getElementById('priceGridUZB');
+        const data = snapshot.val();
+        if (data) {
+            grid.innerHTML = Object.values(data).map(item => `
+                <div class="price-card">
+                    <span class="stars">${item.stars || item.s}</span>
+                    <span class="amount">${item.price || item.p} UZS</span>
+                </div>
+            `).join('');
+        } else {
+            grid.innerHTML = '<p style="color:#555;">Narxlar yuklanmoqda...</p>';
+        }
+    });
+}
+
+window.onload = function() {
+    loadArticles(); 
+    loadPrices(); 
+    
+    const savedId = localStorage.getItem('activeOrderId');
+    if (savedId) showStatusScreen(savedId, localStorage.getItem('activeQueueNum'));
+};
+    function showAuthStep(step) {
+        const choice = document.getElementById('authChoice');
+        const form = document.getElementById('authForm');
+        const errorMsg = document.getElementById('authError');
+        errorMsg.style.display = 'none';
+
+        if (step === 'choice') {
+            choice.style.display = 'block';
+            form.style.display = 'none';
+        } else {
+            choice.style.display = 'none';
+            form.style.display = 'block';
+            authMode = step;
+            document.getElementById('authTitle').innerText = step === 'register' ? "YANGI AKKAUNT" : "KIRISH";
+            document.getElementById('authSubmitBtn').onclick = handleAuth;
+        }
+    }
+
+    function handleAuth() {
+        const name = document.getElementById('loginName').value.trim();
+        const pass = document.getElementById('loginPass').value.trim();
+        const errorMsg = document.getElementById('authError');
+
+        if (name.length < 3 || pass.length < 4) {
+            errorMsg.innerText = "Ism kamida 3, parol 4 ta belgi bo'lishi shart!";
+            errorMsg.style.display = 'block';
+            return;
+        }
+
+        db.ref('users/' + name).once('value').then((snap) => {
+            const userData = snap.val();
+
+            if (authMode === 'login') {
+                if (userData && userData.password === pass) {
+                    loginSuccess(name);
+                } else {
+                    errorMsg.innerText = "Ism yoki parol noto'g'ri! ❌";
+                    errorMsg.style.display = 'block';
+                }
+            } else {
+                if (userData) {
+                    errorMsg.innerText = "Bu ism band! Boshqa tanlang. ⚠️";
+                    errorMsg.style.display = 'block';
+                } else {
+                    db.ref('users/' + name).set({ password: pass }).then(() => {
+                        alert("Akkaunt yaratildi! ✨");
+                        loginSuccess(name);
+                    });
+                }
+            }
+        });
+    }
+
+    function loginSuccess(name) {
+        currentUser = name;
+        document.getElementById('loginBtn').style.display = 'none';
+        document.getElementById('userNameDisplay').innerText = name.toUpperCase();
+        document.getElementById('userNameDisplay').style.display = 'inline';
+        document.getElementById('loginName').value = "";
+        document.getElementById('loginPass').value = "";
+        toggleOverlay('loginOverlay');
+    }
+    window.onload = function() {
+        const savedId = localStorage.getItem('activeOrderId');
+        if (savedId) showStatusScreen(savedId, localStorage.getItem('activeQueueNum'));
+    };
+
+    function updateFileName(input) { if (input.files[0]) document.getElementById('fileName').innerText = "✅ Rasm yuklandi"; }
 
     const uzbPrices = [
         {s: "Weekly Pass", p: "21.000"}, {s: "22 ⭐", p: "6.000"}, {s: "55 ⭐", p: "13.000"},
@@ -153,61 +324,28 @@
         {s: "7727 ⭐", p: "1.300.000"}, {s: "9288 ⭐", p: "1.550.000"}, {s: "11064 ⭐", p: "1.860.000"}
     ];
     document.getElementById('priceGridUZB').innerHTML = uzbPrices.map(item => `<div class="price-card"><span class="stars">${item.s}</span><span class="amount">${item.p} UZS</span></div>`).join('');
-
-    db.ref('articles').on('value', (snap) => {
-        const container = document.getElementById('articlesContainer');
-        container.innerHTML = '';
-        const data = snap.val();
-        for (let id in data) {
-            const item = data[id];
-            container.innerHTML += `<div class="article-card">${item.image ? `<img src="${item.image}">` : ''}<h4>${item.title}</h4><p>${item.text}</p></div>`;
-        }
-    });
-
-    // НОВАЯ ЛОГИКА ОТПРАВКИ
     document.getElementById('orderForm').onsubmit = async function(e) {
         e.preventDefault();
-        
         const gameId = document.getElementById('gameId').value;
         const packet = document.getElementById('packet').value;
         const fileInput = document.getElementById('fileInput');
 
-        // 1. Очередь
         const snapshot = await db.ref('orders').once('value');
-        const ordersCount = snapshot.val() ? Object.values(snapshot.val()).filter(o => o.status !== 'completed').length : 0;
-        const myQueuePos = ordersCount + 1;
+        const count = snapshot.val() ? Object.values(snapshot.val()).filter(o => o.status !== 'completed').length : 0;
+        const myQueuePos = count + 1;
 
-        // 2. Создаем ID
         const orderRef = db.ref('orders').push();
         const orderId = orderRef.key;
 
-        // 3. База данных
-        await orderRef.set({
-            gameId: gameId,
-            packet: packet,
-            status: 'processing',
-            queueNum: myQueuePos,
-            timestamp: Date.now()
-        });
+        await orderRef.set({ gameId, packet, status: 'processing', queueNum: myQueuePos, user: currentUser || 'Guest' });
 
-        // 4. Телеграм (с кнопками)
         const botToken = '8749291196:AAGChO11ZGlYJ68XX_UWuCXyviQzzqlOVbQ';
         const chatId = '1743637553';
-        
-        const keyboard = {
-            inline_keyboard: [[
-                { text: "✅ Принять", callback_data: `accept_${orderId}` },
-                { text: "🏁 Готово", callback_data: `done_${orderId}` }
-            ]]
-        };
-
-        const text = `🚀 *YANGI BUYURTMA #${myQueuePos}*\n🆔 ID: \`${orderId}\`\n👤 Game ID: \`${gameId}\`\n💎 Paket: ${packet}`;
+        const text = `🚀 *BUYURTMA #${myQueuePos}*\n👤 User: ${currentUser || 'Mehmon'}\n🆔 ID: ${gameId}\n💎 Paket: ${packet}`;
         
         const fd = new FormData();
         fd.append('chat_id', chatId);
-        fd.append('reply_markup', JSON.stringify(keyboard));
         fd.append('parse_mode', 'Markdown');
-
         if (fileInput.files[0]) {
             fd.append('photo', fileInput.files[0]);
             fd.append('caption', text);
@@ -217,6 +355,8 @@
             fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, { method: 'POST', body: fd });
         }
 
+        localStorage.setItem('activeOrderId', orderId);
+        localStorage.setItem('activeQueueNum', myQueuePos);
         showStatusScreen(orderId, myQueuePos);
     };
 
@@ -225,27 +365,25 @@
         document.getElementById('queueSection').style.display = 'block';
         document.getElementById('queueNum').innerText = "#" + queueNum;
         
+        if (!document.getElementById('controls')) {
+            const controls = document.createElement('div');
+            controls.id = 'controls';
+            controls.style.marginTop = '20px';
+            const btnNew = document.createElement('button');
+            btnNew.innerText = "YANGI BUYURTMA ➕";
+            btnNew.className = "nav-btn";
+            btnNew.style.width = "100%";
+            btnNew.onclick = () => { localStorage.removeItem('activeOrderId'); location.reload(); };
+            controls.append(btnNew);
+            document.getElementById('queueSection').appendChild(controls);
+        }
+
         db.ref('orders/' + orderId).on('value', (snap) => {
             const data = snap.val();
             if(!data) return;
             const badge = document.getElementById('statusBadge');
-            const title = document.getElementById('statusTitle');
-
-            if (data.status === 'processing') {
-                badge.innerText = "PROTSESSDA";
-                badge.style.background = "#ffd700";
-            } else if (data.status === 'accepted') {
-                badge.innerText = "QABUL QILINDI";
-                badge.style.background = "#3498db";
-                badge.style.color = "white";
-                title.innerText = "Operator ishni boshladi";
-            } else if (data.status === 'completed') {
-                badge.innerText = "TAYYOR";
-                badge.style.background = "#00ff88";
-                badge.style.color = "black";
-                title.innerText = "Olmoslar yuborildi!";
-                document.getElementById('loader').style.display = 'none';
-            }
+            if (data.status === 'accepted') { badge.innerText = "QABUL QILINDI"; badge.style.background = "#3498db"; }
+            if (data.status === 'completed') { badge.innerText = "TAYYOR"; badge.style.background = "#00ff88"; document.getElementById('loader').style.display = 'none'; }
         });
     }
 </script>
